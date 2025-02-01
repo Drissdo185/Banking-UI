@@ -1,7 +1,7 @@
 package com.example.blog.entity;
+
 import jakarta.persistence.*;
 import lombok.Data;
-import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -18,12 +18,8 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String name;
+    private String username;
 
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    @Column(nullable = false)
+    private String role;
 }
