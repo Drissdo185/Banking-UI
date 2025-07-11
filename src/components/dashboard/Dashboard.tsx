@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { 
   CreditCard, 
   QuickActions, 
@@ -17,34 +16,6 @@ import {
   mockChartData,
   mockSummary 
 } from '../../data/mockData';
-
-const DashboardContainer = styled.div`
-  width: 100%;
-`;
-
-const DashboardGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.spacing['2xl']};
-  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.desktop}) {
-    grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing.lg};
-  }
-`;
-
-const BottomSection = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.spacing['2xl']};
-  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.desktop}) {
-    grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing.lg};
-  }
-`;
 
 const quickActions = [
   {
@@ -65,22 +36,22 @@ const quickActions = [
 
 export const Dashboard: React.FC = () => {
   return (
-    <DashboardContainer>
-      <DashboardGrid>
+    <div className="w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12 lg:gap-6 lg:mb-6">
         <CreditCard card={mockCreditCard} />
         <QuickActions actions={quickActions} />
-      </DashboardGrid>
+      </div>
 
       <SummaryCards data={mockSummary} />
 
       <BalanceChart data={mockChartData} />
 
-      <BottomSection>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12 lg:gap-6 lg:mb-6">
         <TransactionList transactions={mockTransactions} />
         <SpendingCategories categories={mockSpendingCategories} />
-      </BottomSection>
+      </div>
 
       <SavingsGoals goals={mockSavingsGoals} />
-    </DashboardContainer>
+    </div>
   );
 };

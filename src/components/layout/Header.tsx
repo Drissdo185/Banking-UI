@@ -1,116 +1,71 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Button, Icon } from '../ui';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface HeaderProps {
   onMenuToggle?: () => void;
 }
 
-const HeaderContainer = styled.header`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    margin-top: ${({ theme }) => theme.spacing['2xl']};
-  }
-`;
-
-const HeaderLeft = styled.div`
-  h1 {
-    font-size: ${({ theme }) => theme.typography.fontSizes['3xl']};
-    font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
-    color: ${({ theme }) => theme.colors.neutrals.gray800};
-    margin-bottom: ${({ theme }) => theme.spacing.xs};
-  }
-`;
-
-const Breadcrumb = styled.div`
-  display: flex;
-  align-items: center;
-  color: ${({ theme }) => theme.colors.neutrals.gray500};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  gap: ${({ theme }) => theme.spacing.sm};
-
-  i {
-    font-size: ${({ theme }) => theme.typography.fontSizes.xs};
-  }
-`;
-
-const HeaderActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.md};
-`;
-
-const AddCardButton = styled(Button)`
-  background: ${({ theme }) => theme.colors.secondary.orange};
-  
-  &:hover {
-    background: ${({ theme }) => theme.colors.secondary.orangeLight};
-    transform: translateY(-1px);
-  }
-`;
-
-const PeriodSelector = styled.select`
-  background: ${({ theme }) => theme.colors.neutrals.white};
-  border: 1px solid ${({ theme }) => theme.colors.neutrals.gray200};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
-  color: ${({ theme }) => theme.colors.neutrals.gray500};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  cursor: pointer;
-`;
-
-const MobileMenuToggle = styled.button`
-  display: none;
-  background: ${({ theme }) => theme.colors.neutrals.white};
-  border: 1px solid ${({ theme }) => theme.colors.neutrals.gray200};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  padding: ${({ theme }) => theme.spacing.md};
-  margin-right: ${({ theme }) => theme.spacing.md};
-  cursor: pointer;
-  color: ${({ theme }) => theme.colors.neutrals.gray500};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    display: block;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
-  }
-`;
-
 export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
+  const { logout, user } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   return (
     <>
-      <MobileMenuToggle onClick={onMenuToggle}>
+      <button 
+        onClick={onMenuToggle}
+        className="hidden md:hidden fixed top-5 left-5 z-[1001] bg-white border border-gray-200 rounded-lg p-4 cursor-pointer text-gray-500"
+      >
         <Icon name="fas fa-bars" />
-      </MobileMenuToggle>
+      </button>
       
-      <HeaderContainer>
-        <HeaderLeft>
-          <h1>My Card</h1>
-          <Breadcrumb>
+      <header className="flex justify-between items-center mb-12 md:mt-12">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-1">My Card</h1>
+          <div className="flex items-center text-gray-500 text-sm gap-2">
             <span>Dashboard</span>
             <Icon name="fas fa-chevron-right" size="sm" />
             <span>My Card</span>
-          </Breadcrumb>
-        </HeaderLeft>
+          </div>
+        </div>
         
-        <HeaderActions>
-          <AddCardButton>
+        <div className="flex items-center gap-4">
+          <Button 
+            className="bg-secondary-orange hover:bg-secondary-orangeLight hover:-translate-y-px"
+          >
             <Icon name="fas fa-plus" />
             Add Card
-          </AddCardButton>
-          <PeriodSelector>
+          </Button>
+          
+          <select className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-500 text-sm cursor-pointer">
             <option>Monthly</option>
             <option>Weekly</option>
             <option>Yearly</option>
-          </PeriodSelector>
-        </HeaderActions>
-      </HeaderContainer>
+          </select>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">
+              {user?.firstName ? `${user.firstName} ${user.lastName}` : user?.username}
+            </span>
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={handleLogout}
+              className="text-gray-500"
+            >
+              <Icon name="fas fa-sign-out-alt" size="sm" />
+              Logout
+            </Button>
+          </div>
+        </div>
+      </header>
     </>
   );
 };

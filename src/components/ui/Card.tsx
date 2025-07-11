@@ -1,5 +1,4 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
 
 interface CardProps {
   variant?: 'default' | 'primary' | 'glass';
@@ -10,78 +9,52 @@ interface CardProps {
   onClick?: () => void;
 }
 
-const StyledCard = styled.div<CardProps>`
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  transition: all ${({ theme }) => theme.animations.duration.normal} ${({ theme }) => theme.animations.easing.default};
-  border: 1px solid ${({ theme }) => theme.colors.neutrals.gray200};
-  position: relative;
-  overflow: hidden;
+const getVariantClasses = (variant: 'default' | 'primary' | 'glass') => {
+  switch (variant) {
+    case 'default':
+      return 'bg-white shadow-card border border-gray-200';
+    case 'primary':
+      return 'bg-gradient-to-br from-primary-brand to-primary-brandLight text-white border-none shadow-lg relative overflow-hidden before:absolute before:-top-1/2 before:-right-1/2 before:w-48 before:h-48 before:bg-radial-gradient before:opacity-10 before:rounded-full';
+    case 'glass':
+      return 'bg-white bg-opacity-10 backdrop-blur-md border border-white border-opacity-20';
+    default:
+      return 'bg-white shadow-card border border-gray-200';
+  }
+};
 
-  ${({ variant, theme }) => variant === 'default' && css`
-    background: ${theme.colors.neutrals.white};
-    box-shadow: ${theme.shadows.card};
-  `}
-
-  ${({ variant, theme }) => variant === 'primary' && css`
-    background: ${theme.colors.gradients.cardGradient};
-    color: ${theme.colors.neutrals.white};
-    border: none;
-    box-shadow: ${theme.shadows.lg};
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-  `}
-
-  ${({ variant, theme }) => variant === 'glass' && css`
-    background: ${theme.colors.gradients.glassmorphism};
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  `}
-
-  ${({ padding, theme }) => padding === 'sm' && css`
-    padding: ${theme.spacing.md};
-  `}
-
-  ${({ padding, theme }) => padding === 'md' && css`
-    padding: ${theme.spacing.lg};
-  `}
-
-  ${({ padding, theme }) => padding === 'lg' && css`
-    padding: ${theme.spacing.xl};
-  `}
-
-  ${({ padding, theme }) => padding === 'xl' && css`
-    padding: ${theme.spacing['2xl']};
-  `}
-
-  ${({ hoverable, theme }) => hoverable && css`
-    cursor: pointer;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: ${theme.shadows.cardHover};
-    }
-  `}
-`;
+const getPaddingClasses = (padding: 'sm' | 'md' | 'lg' | 'xl') => {
+  switch (padding) {
+    case 'sm':
+      return 'p-4';
+    case 'md':
+      return 'p-6';
+    case 'lg':
+      return 'p-8';
+    case 'xl':
+      return 'p-12';
+    default:
+      return 'p-8';
+  }
+};
 
 export const Card: React.FC<CardProps> = ({ 
   variant = 'default', 
   padding = 'lg', 
   hoverable = false,
   children, 
+  className = '',
   ...props 
 }) => {
+  const baseClasses = 'rounded-xl transition-all duration-200 relative overflow-hidden';
+  const variantClasses = getVariantClasses(variant);
+  const paddingClasses = getPaddingClasses(padding);
+  const hoverClasses = hoverable ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-card-hover' : '';
+  
+  const combinedClasses = `${baseClasses} ${variantClasses} ${paddingClasses} ${hoverClasses} ${className}`.trim();
+
   return (
-    <StyledCard variant={variant} padding={padding} hoverable={hoverable} {...props}>
+    <div className={combinedClasses} {...props}>
       {children}
-    </StyledCard>
+    </div>
   );
 };

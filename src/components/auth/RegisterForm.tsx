@@ -21,6 +21,12 @@ const registerSchema = yup.object({
     .string()
     .email('Please enter a valid email address')
     .required('Email is required'),
+  username: yup
+    .string()
+    .required('Username is required')
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username must be less than 30 characters')
+    .matches(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
   password: yup
     .string()
     .min(8, 'Password must be at least 8 characters')
@@ -35,12 +41,22 @@ const registerSchema = yup.object({
     .required('Please confirm your password'),
   acceptTerms: yup
     .boolean()
-    .oneOf([true], 'You must accept the terms and conditions'),
+    .oneOf([true], 'You must accept the terms and conditions')
+    .required(),
   marketingEmails: yup.boolean().default(false),
 });
 
 // Form data type
-type RegisterFormData = yup.InferType<typeof registerSchema>;
+interface RegisterFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+  acceptTerms: boolean;
+  marketingEmails: boolean;
+}
 
 // Props interface
 interface RegisterFormProps {
@@ -300,6 +316,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       firstName: '',
       lastName: '',
       email: '',
+      username: '',
       password: '',
       confirmPassword: '',
       acceptTerms: false,
@@ -378,6 +395,18 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             {...register('email')}
           />
           {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+        </FormGroup>
+
+        <FormGroup>
+          <Label htmlFor="username">Username</Label>
+          <Input
+            id="username"
+            type="text"
+            placeholder="Choose a username"
+            hasError={!!errors.username}
+            {...register('username')}
+          />
+          {errors.username && <ErrorMessage>{errors.username.message}</ErrorMessage>}
         </FormGroup>
 
         <FormGroup>

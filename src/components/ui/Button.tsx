@@ -1,5 +1,4 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary';
@@ -8,74 +7,48 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-const StyledButton = styled.button<ButtonProps>`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  border: none;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
-  font-size: ${({ theme }) => theme.typography.fontSizes.base};
-  transition: all ${({ theme }) => theme.animations.duration.normal} ${({ theme }) => theme.animations.easing.default};
-  cursor: pointer;
-  
-  ${({ fullWidth }) => fullWidth && css`
-    width: 100%;
-  `}
-
-  ${({ variant, theme }) => variant === 'primary' && css`
-    background: ${theme.colors.primary.brand};
-    color: ${theme.colors.neutrals.white};
-    
-    &:hover {
-      background: ${theme.colors.primary.brandDark};
-    }
-    
-    &:active {
-      transform: translateY(1px);
-    }
-  `}
-
-  ${({ variant, theme }) => variant === 'secondary' && css`
-    background: transparent;
-    color: ${theme.colors.neutrals.gray500};
-    border: 1px solid ${theme.colors.neutrals.gray200};
-    
-    &:hover {
-      background: ${theme.colors.neutrals.gray50};
-    }
-  `}
-
-  ${({ size, theme }) => size === 'sm' && css`
-    padding: ${theme.spacing.sm} ${theme.spacing.md};
-    font-size: ${theme.typography.fontSizes.sm};
-  `}
-
-  ${({ size, theme }) => size === 'md' && css`
-    padding: 0.75rem ${theme.spacing.lg};
-  `}
-
-  ${({ size, theme }) => size === 'lg' && css`
-    padding: ${theme.spacing.md} ${theme.spacing.xl};
-    font-size: ${theme.typography.fontSizes.lg};
-  `}
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+const getVariantClasses = (variant: 'primary' | 'secondary') => {
+  switch (variant) {
+    case 'primary':
+      return 'bg-primary-brand text-white hover:bg-primary-brandDark active:translate-y-px';
+    case 'secondary':
+      return 'bg-transparent text-gray-500 border border-gray-200 hover:bg-gray-50';
+    default:
+      return 'bg-primary-brand text-white hover:bg-primary-brandDark active:translate-y-px';
   }
-`;
+};
+
+const getSizeClasses = (size: 'sm' | 'md' | 'lg') => {
+  switch (size) {
+    case 'sm':
+      return 'px-4 py-2 text-sm';
+    case 'md':
+      return 'px-6 py-3 text-base';
+    case 'lg':
+      return 'px-8 py-4 text-lg';
+    default:
+      return 'px-6 py-3 text-base';
+  }
+};
 
 export const Button: React.FC<ButtonProps> = ({ 
   variant = 'primary', 
   size = 'md', 
+  fullWidth = false,
   children, 
+  className = '',
   ...props 
 }) => {
+  const baseClasses = 'inline-flex items-center justify-center gap-2 border-none rounded-lg font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed';
+  const variantClasses = getVariantClasses(variant);
+  const sizeClasses = getSizeClasses(size);
+  const widthClasses = fullWidth ? 'w-full' : '';
+  
+  const combinedClasses = `${baseClasses} ${variantClasses} ${sizeClasses} ${widthClasses} ${className}`.trim();
+
   return (
-    <StyledButton variant={variant} size={size} {...props}>
+    <button className={combinedClasses} {...props}>
       {children}
-    </StyledButton>
+    </button>
   );
 };

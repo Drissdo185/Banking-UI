@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import styled from 'styled-components';
 import { Button, Card, Icon } from '../ui';
 
 // Validation schema
 const loginSchema = yup.object({
-  email: yup
+  emailOrUsername: yup
     .string()
-    .email('Please enter a valid email address')
-    .required('Email is required'),
+    .required('Email or username is required'),
   password: yup
     .string()
     .min(6, 'Password must be at least 6 characters')
@@ -27,185 +25,9 @@ interface LoginFormProps {
   onForgotPassword?: () => void;
   onSignUp?: () => void;
   isLoading?: boolean;
-  error?: string;
+  error?: string | null;
 }
 
-// Styled components
-const FormContainer = styled(Card)`
-  max-width: 400px;
-  margin: 0 auto;
-  background: ${({ theme }) => theme.colors.neutrals.white};
-`;
-
-const FormHeader = styled.div`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
-`;
-
-const Title = styled.h1`
-  font-size: ${({ theme }) => theme.typography.fontSizes['3xl']};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.bold};
-  color: ${({ theme }) => theme.colors.neutrals.gray800};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-`;
-
-const Subtitle = styled.p`
-  color: ${({ theme }) => theme.colors.neutrals.gray500};
-  font-size: ${({ theme }) => theme.typography.fontSizes.base};
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.lg};
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const Label = styled.label`
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
-  color: ${({ theme }) => theme.colors.neutrals.gray700};
-`;
-
-const InputWrapper = styled.div`
-  position: relative;
-`;
-
-const Input = styled.input<{ hasError?: boolean }>`
-  width: 100%;
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.lg}`};
-  border: 1px solid ${({ hasError, theme }) => 
-    hasError ? theme.colors.semantic.error : theme.colors.neutrals.gray200};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  font-size: ${({ theme }) => theme.typography.fontSizes.base};
-  background: ${({ theme }) => theme.colors.neutrals.white};
-  color: ${({ theme }) => theme.colors.neutrals.gray800};
-  transition: all ${({ theme }) => theme.animations.duration.normal} ${({ theme }) => theme.animations.easing.default};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primary.brand};
-    box-shadow: 0 0 0 3px rgba(0, 166, 147, 0.1);
-  }
-
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.neutrals.gray400};
-  }
-`;
-
-const PasswordInput = styled(Input)`
-  padding-right: 3rem;
-`;
-
-const PasswordToggle = styled.button`
-  position: absolute;
-  right: ${({ theme }) => theme.spacing.md};
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: ${({ theme }) => theme.colors.neutrals.gray400};
-  cursor: pointer;
-  padding: ${({ theme }) => theme.spacing.sm};
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.neutrals.gray600};
-  }
-`;
-
-const ErrorMessage = styled.span`
-  color: ${({ theme }) => theme.colors.semantic.error};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  margin-top: ${({ theme }) => theme.spacing.xs};
-`;
-
-const GlobalError = styled.div`
-  background: #FEF2F2;
-  border: 1px solid #FECACA;
-  color: ${({ theme }) => theme.colors.semantic.error};
-  padding: ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const RememberMeWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const CheckboxWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const Checkbox = styled.input`
-  width: 16px;
-  height: 16px;
-  border-radius: ${({ theme }) => theme.borderRadius.sm};
-  border: 1px solid ${({ theme }) => theme.colors.neutrals.gray300};
-  cursor: pointer;
-
-  &:checked {
-    background-color: ${({ theme }) => theme.colors.primary.brand};
-    border-color: ${({ theme }) => theme.colors.primary.brand};
-  }
-`;
-
-const CheckboxLabel = styled.label`
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.neutrals.gray600};
-  cursor: pointer;
-`;
-
-const ForgotPasswordLink = styled.button`
-  background: none;
-  border: none;
-  color: ${({ theme }) => theme.colors.primary.brand};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  cursor: pointer;
-  padding: 0;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const SubmitButton = styled(Button)`
-  margin-top: ${({ theme }) => theme.spacing.md};
-`;
-
-const SignUpPrompt = styled.div`
-  text-align: center;
-  margin-top: ${({ theme }) => theme.spacing.xl};
-  padding-top: ${({ theme }) => theme.spacing.xl};
-  border-top: 1px solid ${({ theme }) => theme.colors.neutrals.gray100};
-  font-size: ${({ theme }) => theme.typography.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.neutrals.gray600};
-`;
-
-const SignUpLink = styled.button`
-  background: none;
-  border: none;
-  color: ${({ theme }) => theme.colors.primary.brand};
-  font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
-  cursor: pointer;
-  margin-left: ${({ theme }) => theme.spacing.xs};
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
 
 export const LoginForm: React.FC<LoginFormProps> = ({
   onSubmit,
@@ -223,7 +45,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      email: '',
+      emailOrUsername: '',
       password: '',
       rememberMe: false,
     },
@@ -243,74 +65,95 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   };
 
   return (
-    <FormContainer padding="xl">
-      <FormHeader>
-        <Title>Welcome Back</Title>
-        <Subtitle>Sign in to your account to continue</Subtitle>
-      </FormHeader>
+    <Card padding="xl" className="max-w-md mx-auto bg-white">
+      <div className="text-center mb-12">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
+        <p className="text-gray-500 text-base">Sign in to your account to continue</p>
+      </div>
 
       {error && (
-        <GlobalError>
+        <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg text-sm mb-6 flex items-center gap-2">
           <Icon name="fas fa-exclamation-circle" size="sm" />
           {error}
-        </GlobalError>
+        </div>
       )}
 
-      <Form onSubmit={handleSubmit(handleFormSubmit)}>
-        <FormGroup>
-          <Label htmlFor="email">Email Address</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            hasError={!!errors.email}
-            {...register('email')}
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="emailOrUsername" className="text-sm font-medium text-gray-700">
+            Email or Username
+          </label>
+          <input
+            id="emailOrUsername"
+            type="text"
+            placeholder="Enter your email or username"
+            className={`w-full px-6 py-4 border rounded-lg text-base bg-white text-gray-800 transition-all duration-200 placeholder:text-gray-400 focus:outline-none focus:border-primary-brand focus:shadow-[0_0_0_3px_rgba(0,166,147,0.1)] ${
+              errors.emailOrUsername ? 'border-red-500' : 'border-gray-200'
+            }`}
+            {...register('emailOrUsername')}
           />
-          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
-        </FormGroup>
+          {errors.emailOrUsername && (
+            <span className="text-red-500 text-sm mt-1">{errors.emailOrUsername.message}</span>
+          )}
+        </div>
 
-        <FormGroup>
-          <Label htmlFor="password">Password</Label>
-          <InputWrapper>
-            <PasswordInput
+        <div className="flex flex-col gap-2">
+          <label htmlFor="password" className="text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <div className="relative">
+            <input
               id="password"
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"
-              hasError={!!errors.password}
+              className={`w-full px-6 py-4 pr-12 border rounded-lg text-base bg-white text-gray-800 transition-all duration-200 placeholder:text-gray-400 focus:outline-none focus:border-primary-brand focus:shadow-[0_0_0_3px_rgba(0,166,147,0.1)] ${
+                errors.password ? 'border-red-500' : 'border-gray-200'
+              }`}
               {...register('password')}
             />
-            <PasswordToggle
+            <button
               type="button"
               onClick={togglePasswordVisibility}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-none border-none text-gray-400 cursor-pointer p-2 hover:text-gray-600"
             >
               <Icon name={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'} size="sm" />
-            </PasswordToggle>
-          </InputWrapper>
-          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
-        </FormGroup>
+            </button>
+          </div>
+          {errors.password && (
+            <span className="text-red-500 text-sm mt-1">{errors.password.message}</span>
+          )}
+        </div>
 
-        <RememberMeWrapper>
-          <CheckboxWrapper>
-            <Checkbox
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <input
               id="rememberMe"
               type="checkbox"
+              className="w-4 h-4 rounded-sm border border-gray-300 cursor-pointer checked:bg-primary-brand checked:border-primary-brand"
               {...register('rememberMe')}
             />
-            <CheckboxLabel htmlFor="rememberMe">Remember me</CheckboxLabel>
-          </CheckboxWrapper>
+            <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
+              Remember me
+            </label>
+          </div>
           
           {onForgotPassword && (
-            <ForgotPasswordLink type="button" onClick={onForgotPassword}>
+            <button 
+              type="button" 
+              onClick={onForgotPassword}
+              className="bg-none border-none text-primary-brand text-sm cursor-pointer p-0 hover:underline"
+            >
               Forgot password?
-            </ForgotPasswordLink>
+            </button>
           )}
-        </RememberMeWrapper>
+        </div>
 
-        <SubmitButton
+        <Button
           type="submit"
           fullWidth
           disabled={isLoading || isSubmitting}
+          className="mt-4"
         >
           {isLoading || isSubmitting ? (
             <>
@@ -320,17 +163,21 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           ) : (
             'Sign In'
           )}
-        </SubmitButton>
-      </Form>
+        </Button>
+      </form>
 
       {onSignUp && (
-        <SignUpPrompt>
+        <div className="text-center mt-8 pt-8 border-t border-gray-100 text-sm text-gray-600">
           Don't have an account?
-          <SignUpLink type="button" onClick={onSignUp}>
+          <button 
+            type="button" 
+            onClick={onSignUp}
+            className="bg-none border-none text-primary-brand font-medium cursor-pointer ml-1 hover:underline"
+          >
             Sign up
-          </SignUpLink>
-        </SignUpPrompt>
+          </button>
+        </div>
       )}
-    </FormContainer>
+    </Card>
   );
 };
